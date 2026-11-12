@@ -1,0 +1,335 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@fontsource-variable/schibsted-grotesk";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant glass (&:where([data-glass], [data-glass] *));
+
+/*
+ * TechOpps design tokens. The full rationale lives in DESIGN.md at the frontend root.
+ *
+ * The chrome is ink and grey; colour is spent on data:
+ *   --signal  the one data hue (runway teal): deadline marks, the next-deadline figure, the
+ *             current selection in a chart.
+ *   --urgent  deadlines inside seven days, and nothing else.
+ *   --danger / --ok  status only (a failed run, a saved change).
+ * Category is shown by a grey glyph and its name, never by a hue.
+ *
+ * Three appearances share these roles: light, dark, and Liquid Glass (data-glass on <html>,
+ * which keeps the light or dark values and turns floating surfaces translucent).
+ */
+:root {
+  color-scheme: light;
+
+  /* Surfaces: a cool ledger ground, white sheets, two grey steps for fills. */
+  --background: #f2f4f7;
+  --surface: #ffffff;
+  --surface-2: #eaedf1;
+  --surface-3: #e1e5ea;
+  --border: #dde1e7;
+  --rule: #eceff3;
+  --control: #c6ccd4;
+
+  /* Text in three tiers, each at 4.5:1 or more on every surface above. */
+  --foreground: #0d1015;
+  --muted-foreground: #5a6270;
+  --faint: #646b78;
+
+  /* The one filled button is ink. */
+  --primary: #12161c;
+  --primary-hover: #2a3039;
+  --primary-foreground: #ffffff;
+
+  --signal: #0a7268;
+  --signal-soft: #dff1ee;
+  --urgent: #94560a;
+  --urgent-mark: #d99613;
+  --urgent-soft: #fbf1dc;
+  --danger: #c4242a;
+  --danger-soft: #ffedea;
+  --ok: #23784a;
+  --ok-soft: #e1f5e8;
+
+  --ring: #0a7268;
+
+  /* Elevation: only floating things cast a shadow. */
+  --shadow-float: 0 12px 32px -12px rgb(16 22 32 / 0.22), 0 2px 6px rgb(16 22 32 / 0.06);
+  --overlay: rgb(13 16 21 / 0.32);
+
+  /* Liquid Glass recipe (used only when data-glass is set, see below). */
+  --glass-fill: rgb(255 255 255 / 0.62);
+  --glass-fill-strong: rgb(255 255 255 / 0.78);
+  --glass-edge: rgb(255 255 255 / 0.7);
+  --glass-line: rgb(16 22 32 / 0.08);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.85), inset 0 -1px 0 rgb(16 22 32 / 0.04);
+  --glass-blur: 22px;
+  --glass-field-a: rgb(10 114 104 / 0.14);
+  --glass-field-b: rgb(70 104 160 / 0.12);
+
+  /* Shape, rhythm, motion. */
+  --radius: 0.5rem; /* cards 8px */
+  --radius-control: 6px;
+  --radius-chip: 4px;
+  --radius-float: 12px;
+  --sidebar-width: 15rem;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --dur-1: 120ms; /* press, hover */
+  --dur-2: 180ms; /* menus, popovers, filter changes */
+  --dur-3: 240ms; /* sheets, dialogs */
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --background: #0f1113;
+  --surface: #17191d;
+  --surface-2: #21242a;
+  --surface-3: #2a2e35;
+  --border: #2b2f35;
+  --rule: #22252b;
+  --control: #3d434b;
+
+  --foreground: #eef0f3;
+  --muted-foreground: #adb3bc;
+  --faint: #959ba4;
+
+  --primary: #eef0f3;
+  --primary-hover: #d6dae0;
+  --primary-foreground: #0f1113;
+
+  --signal: #45c2b4;
+  --signal-soft: #15302d;
+  --urgent: #f0b54a;
+  --urgent-mark: #e0a335;
+  --urgent-soft: #33280f;
+  --danger: #f07a80;
+  --danger-soft: #3a1c1f;
+  --ok: #62c58f;
+  --ok-soft: #16301f;
+
+  --ring: #45c2b4;
+
+  --shadow-float: 0 16px 40px -12px rgb(0 0 0 / 0.6), 0 2px 6px rgb(0 0 0 / 0.3);
+  --overlay: rgb(0 0 0 / 0.5);
+
+  --glass-fill: rgb(30 33 38 / 0.58);
+  --glass-fill-strong: rgb(30 33 38 / 0.78);
+  --glass-edge: rgb(255 255 255 / 0.12);
+  --glass-line: rgb(255 255 255 / 0.06);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 -1px 0 rgb(0 0 0 / 0.2);
+  --glass-field-a: rgb(69 194 180 / 0.12);
+  --glass-field-b: rgb(90 120 180 / 0.1);
+}
+
+/* Liquid Glass keeps the light or dark values; the ground steps down so panes stand off it. */
+:root[data-glass] {
+  --background: #e9edf2;
+}
+:root[data-glass][data-theme="dark"] {
+  --background: #0b0d10;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-faint: var(--faint);
+  --color-border: var(--border);
+  --color-rule: var(--rule);
+  --color-control: var(--control);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-urgent: var(--urgent);
+  --color-urgent-mark: var(--urgent-mark);
+  --color-urgent-soft: var(--urgent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-ring: var(--ring);
+  --color-glass-edge: var(--glass-edge);
+  --color-glass-line: var(--glass-line);
+  --radius-sm: var(--radius-chip);
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius-float);
+  --shadow-float: var(--shadow-float);
+  --ease-out: var(--ease-out);
+  --font-sans: "Schibsted Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --text-2xs: 0.75rem;
+  --text-2xs--line-height: 1rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.43;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  ::selection {
+    background: var(--signal-soft);
+  }
+  input,
+  select,
+  textarea {
+    color: inherit;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--faint);
+  }
+  dialog {
+    color: inherit;
+  }
+  dialog::backdrop {
+    background: var(--overlay);
+  }
+}
+
+/* A colour change between appearances, only while the user is switching (never on load). */
+:root.appearance-switching,
+:root.appearance-switching *,
+:root.appearance-switching *::before {
+  transition:
+    background-color var(--dur-3) var(--ease-out),
+    border-color var(--dur-3) var(--ease-out),
+    color var(--dur-3) var(--ease-out),
+    fill var(--dur-3) var(--ease-out) !important;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Floating surfaces: menus, popovers, the command palette, sheets, dialogs, the mobile bars,
+ * the discovery toolbar. Opaque in light and dark; translucent glass in Liquid Glass.
+ */
+@utility floating {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-float);
+}
+
+/* Glass rules are unlayered on purpose: they must win over the solid-fill utilities they replace. */
+/* The page under Liquid Glass gets two fixed, low-contrast fields of colour, so the panes
+   above it have something to refract. Content cards stay opaque and readable. */
+:where([data-glass]) body {
+  /* taste-skill-ignore: Liquid Glass mode only, requested; translucent panes need a field to refract */
+  background-image:
+    radial-gradient(60rem 40rem at 12% -10%, var(--glass-field-a), transparent 70%), /* taste-skill-ignore */
+    radial-gradient(50rem 36rem at 100% 110%, var(--glass-field-b), transparent 70%); /* taste-skill-ignore */
+  background-attachment: fixed;
+}
+
+:where([data-glass]) .floating,
+:where([data-glass]) .glass-pane {
+  background: var(--glass-fill);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-highlight), var(--shadow-float);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+}
+/* Bars that sit over scrolling content (the mobile bars, the sticky results toolbar). */
+:where([data-glass]) .glass-bar {
+  background: var(--glass-fill);
+  border-color: var(--glass-line);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+}
+:where([data-glass]) dialog::backdrop {
+  background: rgb(13 16 21 / 0.14);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+/* Opaque fallback: no backdrop-filter support, or the user asked for less transparency. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :where([data-glass]) .floating,
+  :where([data-glass]) .glass-pane,
+  :where([data-glass]) .glass-bar {
+    background: var(--surface);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :where([data-glass]) .floating,
+  :where([data-glass]) .glass-pane,
+  :where([data-glass]) .glass-bar {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Motion: menus and sheets open quickly and close faster. Nothing performs an entrance. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+@keyframes sheet-left {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@utility animate-pop {
+  animation: pop-in var(--dur-2) var(--ease-out);
+}
+@utility animate-sheet-up {
+  animation: sheet-up var(--dur-3) var(--ease-out);
+}
+@utility animate-sheet-left {
+  animation: sheet-left var(--dur-3) var(--ease-out);
+}
+@utility animate-page {
+  animation: fade var(--dur-2) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
